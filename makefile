@@ -12,3 +12,6 @@ bruteSpan.o: bruteSpan.cpp
 
 stackSpan.o: stackSpan.cpp
 	${CC} ${CXXFLAGS} stackSpan.cpp -o stackSpan.o
+
+clean:
+	rm *.o

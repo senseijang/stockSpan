@@ -13,8 +13,8 @@
 
 // Function prototypes
 void checkInput(int N, bool *invalidInput);
-void generateStocks();
-void printStockSpans();
+void generateStocks(std::stack<int> *stocks, int N);
+void printStockSpans(std::stack<int> stocks);
 void getSpans();
 
 int main()
@@ -32,6 +32,14 @@ int main()
     checkInput(N, &invalidInput);
   }
   std::cout << "\n";
+
+  // stock span variables and generation
+  std::stack<int> stocks;
+  int spans[N] = {0};
+  generateStocks(&stocks, N);
+  printStockSpans(stocks);
+
+  return 0;
 }
 
 /*
@@ -51,4 +59,27 @@ void checkInput(int N, bool *invalidInput)
     *invalidInput = false;
     std::cout << "N-value: " << N << "\n";
   }
+}
+
+void generateStocks(std::stack<int> *stock, int N)
+{
+  srand(time(0));
+
+  for (int i = 0; i < N; i++)
+  {
+    stock->push(rand() % 9 + 1);
+  }
+}
+
+void printStockSpans(std::stack<int> stocks)
+{
+  if (stocks.empty())
+    return;
+  int x = stocks.top();
+  stocks.pop();
+
+  printStockSpans(stocks);
+
+  std::cout << x << " ";
+  stocks.push(x);
 }
