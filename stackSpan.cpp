@@ -12,10 +12,16 @@
 #include <time.h>
 
 // Function prototypes
+/*
+ * Parameter keys:
+ * - if we need read-write, pass pointer to stack
+ * - if only read, pass stack
+ */
 void checkInput(int N, bool *invalidInput);
-void generateStocks(std::stack<int> *stocks, int N);
-void printStockSpans(std::stack<int> stocks);
-void getSpans();
+void generateStocks(std::stack<int> *stocks, int N);        // r-w
+void getSpans(std::stack<int> *stocks, int spans[], int N); // r-w
+void printStockSpans(std::stack<int> stocks);               // r
+void printSpanArray(int spans[], int N);
 
 int main()
 {
@@ -37,7 +43,11 @@ int main()
   std::stack<int> stocks;
   int spans[N] = {0};
   generateStocks(&stocks, N);
+  getSpans(&stocks, spans, N);
+  std::cout << "stocks: ";
   printStockSpans(stocks);
+  std::cout << "\n";
+  printSpanArray(spans, N);
 
   return 0;
 }
@@ -61,13 +71,13 @@ void checkInput(int N, bool *invalidInput)
   }
 }
 
-void generateStocks(std::stack<int> *stock, int N)
+void generateStocks(std::stack<int> *stocks, int N)
 {
   srand(time(0));
 
   for (int i = 0; i < N; i++)
   {
-    stock->push(rand() % 9 + 1);
+    stocks->push(rand() % 9 + 1);
   }
 }
 
@@ -82,4 +92,79 @@ void printStockSpans(std::stack<int> stocks)
 
   std::cout << x << " ";
   stocks.push(x);
+}
+
+void printSpanArray(int spans[], int N)
+{
+  std::cout << "spans: ";
+  for (int i = 0; i < N; i++)
+  {
+    std::cout << spans[i] << " ";
+  }
+  std::cout << "\n";
+}
+
+void getSpans(std::stack<int> *stocks, int spans[], int N)
+{
+  if (stocks->empty())
+    return;
+
+  std::stack<int> usedStocks;
+  std::stack<int> currentSpan;
+
+  int currentVal = stocks->top();
+  stocks->pop();
+
+  for (int a = N - 1; a >= 0; a--)
+  {
+    if (!(stocks->empty()))
+    {
+      for (int i = N - 1; i >= 0; i--)
+      {
+        if (!(stocks->empty()) && (currentVal > stocks->top()))
+        {
+          currentSpan.push(stocks->top());
+          stocks->pop();
+        }
+        else
+        {
+          // store span
+          spans[a] = currentSpan.size() + 1;
+
+          // restore stocks from current span
+          if (!currentSpan.empty())
+          {
+            int M = currentSpan.size();
+            for (int j = 0; j < M; j++)
+            {
+              stocks->push(currentSpan.top());
+              currentSpan.pop();
+            }
+          }
+
+          // add currentVal to usedStocks
+          usedStocks.push(currentVal);
+
+          // change currentVal to next top
+          currentVal = stocks->top();
+          stocks->pop();
+
+          // If we are at the end
+          if (stocks->empty())
+          {
+            usedStocks.push(currentVal);
+            spans[0] = 1;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  // once done, stocks should be empty, time to rebuild
+  for (int k = 0; k < N; k++)
+  {
+    stocks->push(usedStocks.top());
+    usedStocks.pop();
+  }
 }
