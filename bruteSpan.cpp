@@ -72,7 +72,7 @@ void checkInput(int N, bool *invalidInput)
 void generateStocks(int stocks[], int N)
 {
   // seed for random variables
-  srand(time(0));
+  srand(13);
 
   // generates a random value from 1-9 and assigns it
   for (int i = 0; i < N; i++)
