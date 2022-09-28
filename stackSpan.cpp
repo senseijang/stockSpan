@@ -14,7 +14,7 @@
 // Function prototypes
 void checkInput(int N, bool *invalidInput);
 void generateStocks(int stocks[], int N);
-void getSpans(int spans[], int stocks[], int N, int topIndex[]);
+void getSpans(int spans[], int stocks[], int N);
 void printArr(std::string name, int arr[], int N);
 
 int main()
@@ -36,13 +36,11 @@ int main()
   // stock span variables and generation
   int stocks[N] = {0};
   int spans[N] = {0};
-  int topIndex[N] = {0};
 
   generateStocks(stocks, N);
-  getSpans(spans, stocks, N, topIndex);
+  getSpans(spans, stocks, N);
   printArr("Stock", stocks, N);
   printArr("Spans", spans, N);
-  printArr("Index", topIndex, N);
 
   return 0;
 }
@@ -84,10 +82,10 @@ void generateStocks(int stocks[], int N)
   }
 }
 
-void getSpans(int spans[], int stocks[], int N, int topIndex[])
+void getSpans(int spans[], int stocks[], int N)
 {
   std::stack<int> cmp;
-  int atopIndex = 0;
+  int topIndex = 0;
   bool keepGoing = true;
 
   cmp.push(stocks[0]);
@@ -101,20 +99,43 @@ void getSpans(int spans[], int stocks[], int N, int topIndex[])
     {
       cmp.push(stocks[i]);
       spans[i] = i + 1;
-      atopIndex = i;
-      topIndex[i] = atopIndex;
+      topIndex = i;
       i++;
     }
     // new number is less than the top
-    else if (stocks[i] <= cmp.top())
+    else if (stocks[i] < cmp.top())
     {
+      if (cmp.size() >= 2)
+      {
+        topIndex = i - 1;
+      }
       cmp.push(stocks[i]);
-      spans[i] = i - atopIndex;
+      spans[i] = i - topIndex;
+      topIndex++;
+      i++;
+    }
+    else if (stocks[i] == cmp.top())
+    {
+      cmp.pop();
+      // topIndex--;
+      cmp.push(stocks[i]);
+
+      // Check for adjacency
+      if (stocks[i] == stocks[i - 1])
+      {
+        spans[i] = 1;
+      }
+      else
+      {
+        spans[i] = i - topIndex;
+      }
+      topIndex = i;
       i++;
     }
     else
     {
       cmp.pop();
+      topIndex--;
     }
     if (i == N)
     {
@@ -125,7 +146,7 @@ void getSpans(int spans[], int stocks[], int N, int topIndex[])
 
 void printArr(std::string name, int arr[], int N)
 {
-  std::cout << name << ": [ ";
+  std::cout << name << " Array: [ ";
   for (int i = 0; i < N; i++)
   {
     std::cout << arr[i] << " ";
