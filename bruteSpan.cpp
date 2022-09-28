@@ -72,7 +72,7 @@ void checkInput(int N, bool *invalidInput)
 void generateStocks(int stocks[], int N)
 {
   // seed for random variables
-  srand(13);
+  srand(time(0));
 
   // generates a random value from 1-9 and assigns it
   for (int i = 0; i < N; i++)
@@ -90,6 +90,8 @@ void generateStocks(int stocks[], int N)
  */
 void printStockSpans(int stocks[], int spans[], int N)
 {
+  // Will leave if we want to do a fancy print again.
+  /*
   int day = 0;
   std::cout << "        Price Span\n";
   for (int i = 0; i < N; i++)
@@ -98,9 +100,10 @@ void printStockSpans(int stocks[], int spans[], int N)
     std::cout << "Day #" << day << ": " << stocks[i] << "     " << spans[i] << "\n";
   }
   std::cout << "\n";
+  */
 
   // print arrays
-  std::cout << "Stocks Array: [ ";
+  std::cout << "Stock Array: [ ";
   for (int a = 0; a < N; a++)
   {
     std::cout << stocks[a] << " ";
